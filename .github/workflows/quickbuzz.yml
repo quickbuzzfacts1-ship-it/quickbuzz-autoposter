@@ -1,1 +1,41 @@
 
+name: QuickBuzz Automation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 22 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quickbuzz-pipeline
+  cancel-in-progress: false
+
+jobs:
+  setup-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version
+
+      - name: Confirm pipeline is ready to extend
+        run: |
+          python --version
+          echo "QuickBuzz workflow ran successfully."
+          echo "Video generation and YouTube publishing are not configured yet."
+
